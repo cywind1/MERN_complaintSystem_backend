@@ -2,7 +2,26 @@ const express = require("express");
 // express() = app object returned = main app
 const app = express();
 const path = require("path");
+// 2.1
+const { logger } = require("./middleware/logger");
+// 2.2
+const errorHandler = require("./middleware/errorHandler");
+// 2.3
+const cookieParser = require("cookie-parser");
+// 2.4.1
+const cors = require("cors");
+// 2.4.2
+const corsOptions = require("./config/corsOptions");
+
 const PORT = process.env.PORT || 3500;
+// 2.1
+app.use(logger);
+// 2.2
+app.use(errorHandler);
+//2.3 - BUG if no ()
+app.use(cookieParser());
+// 2.4
+app.use(cors(corsOptions));
 
 // express.static = serve static assets, e.g. css / images
 app.use("/", express.static(path.join(__dirname, "/public")));
