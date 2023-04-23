@@ -33,11 +33,19 @@ app.use(cookieParser());
 // 2.4
 app.use(cors(corsOptions));
 
+// DEBUG: TypeError: Cannot destructure property 'username' of 'req.body' as it is undefined.
+// https://www.geeksforgeeks.org/express-js-express-json-function/
+// express.json() = built-in middleware = parses incoming requests with JSON payloads, return object
+app.use(express.json());
+
 // express.static = serve static assets, e.g. css / images
 app.use("/", express.static(path.join(__dirname, "/public")));
 
 // server.js -> root.js -> index.html -> style.css
 app.use("/", require("./routes/root"));
+
+// 4.1 User
+app.use("/users", require("./routes/userRoutes"));
 
 app.all("*", (req, res) => {
   // res.sendStatus(404) also works (latest version)but without css
