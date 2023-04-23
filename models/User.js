@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// User -> userRoutes -> usersController
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
