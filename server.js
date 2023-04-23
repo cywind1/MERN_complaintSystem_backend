@@ -1,9 +1,12 @@
+require("dotenv").config();
 const express = require("express");
 // express() = app object returned = main app
 const app = express();
 const path = require("path");
+const connectDB = require("./config/dbConn");
+const mongoose = require("mongoose");
 // 2.1
-const { logger } = require("./middleware/logger");
+const { logger, logEvents } = require("./middleware/logger");
 // 2.2
 const errorHandler = require("./middleware/errorHandler");
 // 2.3
@@ -14,6 +17,13 @@ const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
 
 const PORT = process.env.PORT || 3500;
+
+// 3
+connectDB();
+
+// development
+console.log(process.env.NODE_ENV);
+
 // 2.1
 app.use(logger);
 // 2.2
@@ -44,4 +54,15 @@ app.all("*", (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+mongoose.connection.once("open", () => {
+  console.log("Connected to MongoDB");
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});
+
+mongoose.connection.on("error", (err) => {
+  console.log(err);
+  logEvents(
+    `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
+    "mongoErrLog.log"
+  );
+});
