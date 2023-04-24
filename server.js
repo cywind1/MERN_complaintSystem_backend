@@ -46,6 +46,8 @@ app.use("/", require("./routes/root"));
 
 // 4.1 User
 app.use("/users", require("./routes/userRoutes"));
+// 4.2 Complaint
+app.use("/complaints", require("./routes/complaintRoutes"));
 
 app.all("*", (req, res) => {
   // res.sendStatus(404) also works (latest version)but without css
