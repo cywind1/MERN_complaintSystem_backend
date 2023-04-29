@@ -44,6 +44,8 @@ app.use("/", express.static(path.join(__dirname, "/public")));
 // server.js -> root.js -> index.html -> style.css
 app.use("/", require("./routes/root"));
 
+// 8.2
+app.use("/auth", require("./routes/authRoutes"));
 // 4.1 User
 app.use("/users", require("./routes/userRoutes"));
 // 4.2 Complaint
@@ -76,3 +78,29 @@ mongoose.connection.on("error", (err) => {
     "mongoErrLog.log"
   );
 });
+
+// DEBUG:
+// app.post("/notes", async (req, res) => {
+//   try {
+//     const { user, title, text } = req.body;
+//     console.log("Before create: ", { user, title, text });
+//     const note = await Note.create({ user, title, text });
+//     console.log("Hihi");
+//     console.log("Note created:", note);
+//     res.send(note);
+//     console.log("Response sent");
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Error creating note");
+//   }
+// });
+
+// DEBUG: check if the request is reaching the server
+// app.post("/notes", async (req, res) => {
+//   console.log("Post request received for creating a new note");
+// });
+
+// DEBUG: check if the request body is being parsed correctly
+// app.post("/notes", async (req, res) => {
+//   console.log("Request body:", req.body);
+// });
