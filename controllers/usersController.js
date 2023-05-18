@@ -24,13 +24,20 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @access Private
 const createNewUser = asyncHandler(async (req, res) => {
   const { username, password, roles } = req.body;
+
+  // 12.3 No role check
+  // if (!username || !password || !Array.isArray(roles) || !roles.length) {
   //confirm data
-  if (!username || !password || !Array.isArray(roles) || !roles.length) {
+  if (!username || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  // check for duplicate
-  const duplicate = await User.findOne({ username }).lean().exec();
+  // 12.1 check for duplicate, collation : check case sensitivity
+  // const duplicate = await User.findOne({ username }).lean().exec();
+  const duplicate = await User.findOne({ username })
+    .collation({ locale: "en", strength: 2 })
+    .lean()
+    .exec();
 
   if (duplicate) {
     return res.status(409).json({ message: "Duplicate username" });
@@ -39,7 +46,12 @@ const createNewUser = asyncHandler(async (req, res) => {
   // hash password = for security
   // Hashing turns password into a short string of letters and/or numbers using an encryption algorithm
   const hashedPwd = await bcrypt.hash(password, 10); // salt rounds
-  const userObject = { username, password: hashedPwd, roles };
+  // const userObject = { username, password: hashedPwd, roles };
+  // role check
+  const userObject =
+    !Array.isArray(roles) || !roles.length
+      ? { username, password: hashedPwd }
+      : { username, password: hashedPwd, roles };
   // create and store new user
   const user = await User.create(userObject);
 
@@ -75,8 +87,12 @@ const updateUser = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "User not found" });
   }
 
-  // check for duplicate
-  const duplicate = await User.findOne({ username }).lean().exec();
+  // 12.1 check for duplicate
+  // const duplicate = await User.findOne({ username }).lean().exec();
+  const duplicate = await User.findOne({ username })
+    .collation({ locale: "en", strength: 2 })
+    .lean()
+    .exec();
 
   // allow updated to the original user
   // _id field is always the first field in the documents in MongoDB

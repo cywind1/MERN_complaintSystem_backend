@@ -80,27 +80,27 @@ mongoose.connection.on("error", (err) => {
 });
 
 // DEBUG:
-// app.post("/notes", async (req, res) => {
+// app.post("/complaints", async (req, res) => {
 //   try {
 //     const { user, title, text } = req.body;
 //     console.log("Before create: ", { user, title, text });
-//     const note = await Note.create({ user, title, text });
+//     const complaint = await Complaint.create({ user, title, text });
 //     console.log("Hihi");
-//     console.log("Note created:", note);
-//     res.send(note);
+//     console.log("Complaint created:", complaint);
+//     res.send(complaint);
 //     console.log("Response sent");
 //   } catch (err) {
 //     console.error(err);
-//     res.status(500).send("Error creating note");
+//     res.status(500).send("Error creating complaint");
 //   }
 // });
 
 // DEBUG: check if the request is reaching the server
-// app.post("/notes", async (req, res) => {
-//   console.log("Post request received for creating a new note");
+// app.post("/complaints", async (req, res) => {
+//   console.log("Post request received for creating a new complaint");
 // });
 
 // DEBUG: check if the request body is being parsed correctly
-// app.post("/notes", async (req, res) => {
+// app.post("/complaints", async (req, res) => {
 //   console.log("Request body:", req.body);
 // });

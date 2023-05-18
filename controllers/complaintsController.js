@@ -20,6 +20,10 @@ const getAllComplaints = asyncHandler(async (req, res) => {
       //   throw new Error("No user found for complaint");
       // }
       const user = await User.findById(complaint.user).lean().exec();
+      // DEBUG: 11_complaint-with-users
+      // console.log("Complaint:", complaint);
+      // console.log("User:", user);
+
       // optional: for debugging
       if (!user) {
         throw new Error(`User with id ${complaint.user} not found`);
@@ -60,7 +64,12 @@ const createNewComplaint = asyncHandler(async (req, res) => {
   }
 
   // Check for duplicate title
-  const duplicate = await Complaint.findOne({ title }).lean().exec();
+  // const duplicate = await Complaint.findOne({ title }).lean().exec();
+  // 12.1 collation : check case sensitivity
+  const duplicate = await Complaint.findOne({ title })
+    .collation({ locale: "en", strength: 2 })
+    .lean()
+    .exec();
 
   if (duplicate) {
     return res.status(409).json({ message: "Duplicate complaint title" });
@@ -104,7 +113,11 @@ const updateComplaint = asyncHandler(async (req, res) => {
   }
 
   // Check for duplicate title
-  const duplicate = await Complaint.findOne({ title }).lean().exec();
+  // const duplicate = await Complaint.findOne({ title }).lean().exec();
+  const duplicate = await Complaint.findOne({ title })
+    .collation({ locale: "en", strength: 2 })
+    .lean()
+    .exec();
 
   // Allow renaming of the original complaint
   if (duplicate && duplicate?._id.toString() !== id) {
